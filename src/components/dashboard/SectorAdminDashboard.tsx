@@ -75,9 +75,11 @@ export default function SectorAdminDashboard() {
 
     setIsUpdating(true);
     try {
-      const response = await fetch(`/api/reports/${reportId}`, {
+      const response = await fetch(`/api/reports/${reportId}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ status }),
       });
       
@@ -85,6 +87,7 @@ export default function SectorAdminDashboard() {
         throw new Error('Failed to update report status');
       }
 
+      // Refresh the dashboard data after successful update
       await fetchDashboardData();
     } catch (error) {
       console.error('Error updating report:', error);
