@@ -7,6 +7,7 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
+      console.log('No session or email found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -14,17 +15,36 @@ export async function GET() {
       where: { email: session.user.email },
     });
 
+    console.log('User found:', user?.role);
+
     if (!user || user.role !== 'SECTOR_ADMIN') {
+      console.log('User not authorized');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const summaries = await prisma.problemSummary.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 5, // Get latest 5 summaries
+    const problemSummaries = await prisma.problemSummary.findMany({
+      select: {
+        id: true,
+        summary: true,
+        problems: true,
+        createdAt: true,
+        sector: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
-    return NextResponse.json(summaries);
+    console.log('Found problem summaries:', problemSummaries);
+    return NextResponse.json(problemSummaries);
+
   } catch (error) {
+    console.error('Error fetching problem summaries:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 } 

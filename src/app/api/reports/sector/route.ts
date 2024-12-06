@@ -18,6 +18,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    console.log('Fetching reports for sector admin:', user.email);
+
     const reports = await prisma.report.findMany({
       where: {
         status: {
@@ -27,16 +29,30 @@ export async function GET() {
       include: {
         user: {
           select: {
-            name: true,
             email: true,
+            nid: true,
+            phone: true,
+          },
+        },
+        sector: {
+          select: {
+            name: true,
+          },
+        },
+        subsector: {
+          select: {
+            name: true,
           },
         },
       },
       orderBy: { createdAt: 'desc' },
     });
 
+    console.log('Found reports:', reports.length);
+
     return NextResponse.json(reports);
   } catch (error) {
+    console.error('Error in sector reports API:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 } 
