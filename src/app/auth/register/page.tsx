@@ -43,71 +43,95 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-md w-full p-10 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl space-y-8 border border-gray-100">
         <div className="text-center">
-          <h2 className="text-3xl font-bold">Create your account</h2>
-          <p className="mt-2 text-gray-600">Join Nagorik Desk today</p>
+          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">Join Nagorik Desk</h2>
+          <p className="mt-3 text-lg text-gray-600">Create your account to get started</p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm">
-              {error}
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+              <p className="font-medium">{error}</p>
             </div>
           )}
           
-          <div className="space-y-4">
-            <input
-              type="text"
-              required
-              placeholder="Full Name"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-            />
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your full name"
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+              />
+            </div>
             
-            <input
-              type="email"
-              required
-              placeholder="Email address"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-            />
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your email"
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
             
-            <input
-              type="password"
-              required
-              placeholder="Password"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-            />
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Create a password"
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
             
-            <select
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, role: e.target.value as Role})}
-              value={formData.role}
-            >
-              <option value="END_USER">End User</option>
-              <option value="SECTOR_ADMIN">Sector Admin</option>
-              <option value="GOVT_ADMIN">Government Admin</option>
-            </select>
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+                Account Type
+              </label>
+              <select
+                id="role"
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                onChange={(e) => setFormData({...formData, role: e.target.value as Role})}
+                value={formData.role}
+              >
+                <option value="END_USER">End User</option>
+                <option value="SECTOR_ADMIN">Sector Admin</option>
+                <option value="GOVT_ADMIN">Government Admin</option>
+              </select>
+            </div>
           </div>
 
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2 transform hover:-translate-y-0.5 transition duration-200"
           >
-            Sign up
+            Create Account
           </button>
         </form>
 
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="text-center text-base text-gray-600">
           Already have an account?{' '}
-          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500 transition duration-200">
             Sign in
           </Link>
         </p>
       </div>
     </div>
   );
-} 
+}

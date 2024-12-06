@@ -45,51 +45,69 @@ export default function RegisterStep1() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-md w-full p-10 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl space-y-8 border border-gray-100">
         <div className="text-center">
-          <h2 className="text-3xl font-bold">Step 1: NID Verification</h2>
-          <p className="mt-2 text-gray-600">Enter your National ID Number and Date of Birth</p>
+          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">Step 1: Verification</h2>
+          <p className="mt-3 text-lg text-gray-600">Enter your National ID Number and Date of Birth</p>
         </div>
 
         <div className="mt-8 space-y-6">
           {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm">
-              {error}
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg">
+              <p className="font-medium">{error}</p>
             </div>
           )}
           
-          <div className="space-y-4">
-            <input
-              type="text"
-              required
-              placeholder="National ID Number"
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, nid: e.target.value})}
-            />
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="nid" className="block text-sm font-medium text-gray-700 mb-1">
+                National ID Number
+              </label>
+              <input
+                id="nid"
+                type="text"
+                required
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter your NID number"
+                onChange={(e) => setFormData({...formData, nid: e.target.value})}
+              />
+            </div>
 
-            <input
-              type="date"
-              required
-              className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => setFormData({...formData, dob: e.target.value})}
-            />
+            <div>
+              <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">
+                Date of Birth
+              </label>
+              <input
+                id="dob"
+                type="date"
+                required
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                onChange={(e) => setFormData({...formData, dob: e.target.value})}
+              />
+            </div>
 
             <button
               type="button"
               onClick={handleVerifyNID}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2 transform hover:-translate-y-0.5 transition duration-200"
             >
-              Verify
+              Verify Identity
             </button>
 
             {isVerified && verificationData && (
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-green-800">Verified Details:</h3>
-                <p className="text-green-700">Name: {verificationData.name}</p>
-                <p className="text-green-700">
-                  Date of Birth: {verificationData.dob}
-                </p>
+              <div className="bg-green-50 p-6 rounded-lg border border-green-200 shadow-sm">
+                <h3 className="text-lg font-semibold text-green-800 mb-3">Verified Details</h3>
+                <div className="space-y-2">
+                  <p className="text-green-700 flex items-center">
+                    <span className="font-medium mr-2">Name:</span>
+                    {verificationData.name}
+                  </p>
+                  <p className="text-green-700 flex items-center">
+                    <span className="font-medium mr-2">Date of Birth:</span>
+                    {verificationData.dob}
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -97,13 +115,13 @@ export default function RegisterStep1() {
           {isVerified && (
             <button
               onClick={() => router.push('/auth/register/step2')}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-offset-2 transform hover:-translate-y-0.5 transition duration-200"
             >
-              Proceed to Registration
+              Continue to Registration
             </button>
           )}
         </div>
       </div>
     </div>
   );
-} 
+}

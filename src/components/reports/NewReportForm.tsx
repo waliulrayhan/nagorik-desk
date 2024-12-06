@@ -159,108 +159,122 @@ export default function NewReportForm() {
   }, [previewUrls]);
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Submit New Report</h1>
-      
-      {error && (
-        <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-md">
-          {error}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Sector Selection */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Sector</label>
-          <select
-            required
-            value={formData.sectorId || ''}
-            onChange={e => handleSectorChange(Number(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="">Select a sector</option>
-            {sectors.map(sector => (
-              <option key={sector.id} value={sector.id}>
-                {sector.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Subsector Selection */}
-        {subsectors.length > 0 && (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Submit New Report</h1>
+        
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg">
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Sector Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Subsector</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
             <select
               required
-              value={formData.subsectorId || ''}
-              onChange={e => setFormData(prev => ({ ...prev, subsectorId: Number(e.target.value) }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              value={formData.sectorId || ''}
+              onChange={e => handleSectorChange(Number(e.target.value))}
+              className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
             >
-              <option value="">Select a subsector</option>
-              {subsectors.map(subsector => (
-                <option key={subsector.id} value={subsector.id}>
-                  {subsector.name}
+              <option value="">Select a sector</option>
+              {sectors.map(sector => (
+                <option key={sector.id} value={sector.id}>
+                  {sector.name}
                 </option>
               ))}
             </select>
           </div>
-        )}
 
-        {/* Description Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
-          <textarea
-            required
-            value={formData.description}
-            onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            rows={4}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
+          {/* Subsector Selection */}
+          {subsectors.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Subsector</label>
+              <select
+                required
+                value={formData.subsectorId || ''}
+                onChange={e => setFormData(prev => ({ ...prev, subsectorId: Number(e.target.value) }))}
+                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              >
+                <option value="">Select a subsector</option>
+                {subsectors.map(subsector => (
+                  <option key={subsector.id} value={subsector.id}>
+                    {subsector.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-        {/* Image Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Evidence Images (Optional)</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="mt-1 block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-md file:border-0
-              file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
-          />
-        </div>
-
-        {/* Image Previews */}
-        {previewUrls.length > 0 && (
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="relative h-24">
-                <Image
-                  src={url}
-                  alt={`Preview ${index + 1}`}
-                  fill
-                  className="object-cover rounded-lg"
-                />
-              </div>
-            ))}
+          {/* Description Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              required
+              value={formData.description}
+              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              rows={4}
+              className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              placeholder="Describe the issue in detail..."
+            />
           </div>
-        )}
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-        >
-          {isLoading ? 'Submitting...' : 'Submit Report'}
-        </button>
-      </form>
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Evidence Images (Optional)</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="mt-1 block w-full text-sm text-gray-500
+                file:mr-4 file:py-2.5 file:px-4
+                file:rounded-lg file:border-0
+                file:text-sm file:font-medium
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100 
+                transition-all duration-200"
+            />
+          </div>
+
+          {/* Image Previews */}
+          {previewUrls.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+              {previewUrls.map((url, index) => (
+                <div key={index} className="relative aspect-square rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                  <Image
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    fill
+                    className="object-cover hover:scale-105 transition-transform duration-200"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2 transform hover:-translate-y-0.5 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          >
+            {isLoading ? (
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting Report...
+              </span>
+            ) : (
+              'Submit Report'
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
-} 
+}
