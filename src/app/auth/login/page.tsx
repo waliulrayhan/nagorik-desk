@@ -1,12 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Login() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -29,31 +28,8 @@ export default function Login() {
       if (result?.error) {
         setError('Invalid email or password');
       } else {
-        try {
-          const response = await fetch('/api/auth/user');
-          if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-          }
-          
-          const userData = await response.json();
-          
-          switch (userData.role) {
-            case 'STUDENT':
-              router.push('/dashboard');
-              break;
-            case 'EDUCATOR':
-              router.push('/dashboard');
-              break;
-            case 'ADMIN':
-              router.push('/dashboard');
-              break;
-            default:
-              router.push('/dashboard');
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          router.push('/dashboard'); // Fallback to dashboard if user data fetch fails
-        }
+        router.push('/dashboard');
+        router.refresh();
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -71,19 +47,13 @@ export default function Login() {
           <p className="mt-2 text-gray-600">Sign in to your account</p>
         </div>
 
-        {searchParams.get('registered') && (
-          <div className="bg-green-50 text-green-500 p-3 rounded-lg text-sm">
-            Registration successful! Please sign in.
+        {error && (
+          <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm">
+            {error}
           </div>
         )}
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
           
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <input
               type="email"

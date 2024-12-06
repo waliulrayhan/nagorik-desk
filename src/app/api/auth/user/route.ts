@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
       id: session.user.id,
       email: session.user.email,
       role: session.user.role,
-      name: session.user.username,
+      name: session.user.name,
     });
   } catch (error) {
     console.error("Error fetching user:", error);
