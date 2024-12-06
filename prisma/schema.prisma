@@ -7,16 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model NidVerification {
+  id        Int      @id @default(autoincrement())
+  nid       String   @unique
+  name      String
+  dob       DateTime
+  user      User?    // Optional relation to User (if registered)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
-  id          Int       @id @default(autoincrement())
-  name        String
-  email       String    @unique
-  password    String
-  role        Role
-  reports     Report[]  // Relation to reports submitted by the user
-  votes       Vote[]    // Relation to votes cast by the user
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              Int             @id @default(autoincrement())
+  nidVerification NidVerification @relation(fields: [nid], references: [nid])
+  nid             String          @unique
+  phone           String          @unique
+  email           String          @unique
+  password        String
+  isRegistered    Boolean         @default(false)
+  role            Role            @default(END_USER)
+  reports         Report[]  
+  votes           Vote[]    
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 enum Role {
