@@ -1,36 +1,187 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nagorik Desk - Citizen Engagement Platform
+
+A modern web platform connecting citizens with government authorities for efficient problem resolution and transparent governance.
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [API Documentation](#api-documentation)
+- [User Roles](#user-roles)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Overview
+
+Nagorik Desk is a comprehensive citizen engagement platform designed to streamline the process of reporting and resolving civic issues. It creates a direct channel between citizens and government authorities, leveraging AI and machine learning to ensure efficient problem resolution.
+
+### Problem Statement
+
+Many cities face challenges with unresolved citizen grievances that often escalate into public protests. The lack of an efficient, centralized platform for citizens to report problems and for authorities to address these issues systematically leads to:
+- Delayed problem resolution
+- Citizen dissatisfaction
+- Inefficient resource allocation
+- Communication gaps between citizens and government
+
+### Solution
+
+Our platform provides:
+- Structured problem reporting system
+- AI-driven report summarization
+- ML-based prioritization
+- Transparent resolution tracking
+- Citizen participation through voting
+
+## Features
+
+### For Citizens (End Users)
+- Secure authentication with NID verification
+- Structured problem reporting with sector categorization
+- Real-time status tracking
+- Solution voting system
+- Progress dashboard
+
+### For Sector Administrators
+- Sector-specific report management
+- AI-powered report summarization
+- Problem prioritization tools
+- Solution proposal system
+
+### For Government Administrators
+- Cross-sector oversight
+- ML-based sector prioritization
+- Historical data analysis
+- Performance metrics dashboard
+
+## Technology Stack
+
+### Frontend
+- Next.js 13 (App Router)
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- NextAuth.js
+
+### Backend
+- Node.js
+- Prisma ORM
+- PostgreSQL
+- REST APIs
+
+### AI/ML Components
+- Report Summarization API
+- Sector Prioritization Algorithms
+
+## Project Structure
+
+```
+nagorik-desk/
+├── src/
+│   ├── app/                 # Next.js 13 app directory
+│   ├── components/          # React components
+│   ├── lib/                 # Utility functions
+│   └── types/              # TypeScript definitions
+├── prisma/                  # Database schema
+├── public/                  # Static assets
+└── tests/                  # Test files
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- PostgreSQL
+- npm or yarn
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/nagorik-desk.git
+cd nagorik-desk
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Configure your `.env` file:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/nagorik-desk"
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+APY_HUB_TOKEN="your-apy-hub-token"
+```
 
-## Learn More
+5. Run database migrations:
+```bash
+npx prisma migrate dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Start the development server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authentication Endpoints
 
-## Deploy on Vercel
+```typescript
+POST /api/auth/register
+POST /api/auth/login
+GET /api/auth/verify-nid
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Report Management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```typescript
+POST /api/reports
+GET /api/reports/user
+GET /api/reports/sector
+```
+
+### Sector Management
+
+```typescript
+GET /api/sectors
+GET /api/sectors/[sectorId]/subsectors
+```
+
+## User Roles
+
+### END_USER
+- Can submit reports
+- Track report status
+- Vote on solutions
+
+### SECTOR_ADMIN
+- Manage sector-specific reports
+- Generate problem summaries
+- Propose solutions
+
+### GOVT_ADMIN
+- Cross-sector oversight
+- Approve/reject solutions
+- Access analytics dashboard
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
