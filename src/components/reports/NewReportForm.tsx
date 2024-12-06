@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface FormData {
-  title: string;
   sectorId: number;
   subsectorId: number;
   description: string;
@@ -21,7 +20,6 @@ export default function NewReportForm() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   
   const [formData, setFormData] = useState<FormData>({
-    title: '',
     sectorId: 0,
     subsectorId: 0,
     description: '',
@@ -103,10 +101,6 @@ export default function NewReportForm() {
     setError(null);
 
     try {
-      // Validate form data
-      if (!formData.title.trim()) {
-        throw new Error('Title is required');
-      }
       if (!formData.sectorId) {
         throw new Error('Please select a sector');
       }
@@ -118,12 +112,10 @@ export default function NewReportForm() {
       }
 
       const submitData = new FormData();
-      submitData.append('title', formData.title.trim());
       submitData.append('sectorId', formData.sectorId.toString());
       submitData.append('subsectorId', formData.subsectorId.toString());
       submitData.append('description', formData.description.trim());
       
-      // Append each image to the FormData
       formData.images.forEach((image, index) => {
         submitData.append('images', image);
       });
@@ -177,18 +169,6 @@ export default function NewReportForm() {
       )}
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Title</label>
-          <input
-            type="text"
-            required
-            value={formData.title}
-            onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-
         {/* Sector Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Sector</label>

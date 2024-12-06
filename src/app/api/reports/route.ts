@@ -5,13 +5,11 @@ import { authOptions } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user from database
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
@@ -22,15 +20,14 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     
-    // Extract and validate form data
-    const title = formData.get('title') as string;
+    // Extract and validate form data (remove title)
     const sectorId = parseInt(formData.get('sectorId') as string);
     const subsectorId = parseInt(formData.get('subsectorId') as string);
     const description = formData.get('description') as string;
     const imageFiles = formData.getAll('images') as File[];
 
-    // Validate required fields
-    if (!title || !sectorId || !subsectorId || !description) {
+    // Validate required fields (remove title validation)
+    if (!sectorId || !subsectorId || !description) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -41,20 +38,17 @@ export async function POST(req: Request) {
     const imageUrls: string[] = [];
     
     for (const file of imageFiles) {
-      // Convert file to Base64 string
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const base64String = buffer.toString('base64');
-      
-      // Create a data URL
       const imageUrl = `data:${file.type};base64,${base64String}`;
       imageUrls.push(imageUrl);
     }
 
-    // Create the report with images
+    // Create the report with null title
     const report = await prisma.report.create({
       data: {
-        title,
+        title: null, // Set title to null
         description,
         sectorId,
         subsectorId,
