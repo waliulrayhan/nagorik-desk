@@ -56,6 +56,34 @@ export default function GovtAdminDashboard() {
     setTrends(trendsData);
   };
 
+  // Function to approve a solution
+  const approveSolution = async (reportId: number) => {
+    try {
+      const response = await fetch(`/api/reports/${reportId}/approve`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        // Update the UI or state as needed
+      }
+    } catch (error) {
+      console.error('Error approving solution:', error);
+    }
+  };
+
+  // Function to generate and send reports
+  const generateAndSendReports = async () => {
+    try {
+      const response = await fetch('/api/reports/generate', {
+        method: 'POST',
+      });
+      if (response.ok) {
+        // Notify the user that reports have been sent
+      }
+    } catch (error) {
+      console.error('Error generating reports:', error);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Priority Sectors Section */}

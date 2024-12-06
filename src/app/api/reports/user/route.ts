@@ -23,12 +23,22 @@ export async function GET() {
       include: {
         sector: {
           select: {
+            id: true,
             name: true,
           },
         },
+        subsector: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        votes: true,
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    console.log('Found reports:', reports);
 
     return NextResponse.json(reports);
   } catch (error) {
