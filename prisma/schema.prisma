@@ -42,6 +42,7 @@ model Sector {
   id                  Int                   @id @default(autoincrement())
   name                String                @unique
   description         String?
+  subsectors         Subsector[]           // Added relation to subsectors
   problems            Report[]              // Relation to problems submitted under this sector
   problemSummaries    ProblemSummary[]      // Added relation to ProblemSummary
   resolutionPriorities ResolutionPriority[] // Added relation to ResolutionPriority
@@ -49,17 +50,33 @@ model Sector {
   updatedAt           DateTime              @updatedAt
 }
 
+model Subsector {
+  id          Int       @id @default(autoincrement())
+  name        String
+  sector      Sector    @relation(fields: [sectorId], references: [id])
+  sectorId    Int
+  reports     Report[]  // Reports in this subsector
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([sectorId, name])
+}
+
 model Report {
   id          Int       @id @default(autoincrement())
   title       String
   description String
+  images      Image[]   // Added relation to images
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
   sector      Sector    @relation(fields: [sectorId], references: [id])
   sectorId    Int
+  subsector   Subsector @relation(fields: [subsectorId], references: [id])
+  subsectorId Int
   status      Status    @default(PENDING)
   resolution  String?
-  votes       Vote[]    // Relation to votes for this report
+  priority    Float?    // Added field for ML-calculated priority
+  votes       Vote[]    
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -96,5 +113,13 @@ model ResolutionPriority {
   sector      Sector    @relation(fields: [sectorId], references: [id])
   sectorId    Int
   priority    Int       // Priority score calculated by ML
+  createdAt   DateTime  @default(now())
+}
+
+model Image {
+  id          Int       @id @default(autoincrement())
+  url         String
+  report      Report    @relation(fields: [reportId], references: [id])
+  reportId    Int
   createdAt   DateTime  @default(now())
 }

@@ -1,25 +1,29 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const sectors = await prisma.sector.findMany({
+      orderBy: {
+        name: 'asc'
+      },
       select: {
         id: true,
         name: true,
-        description: true,
-      },
+        description: true
+      }
     });
+
+    if (!sectors) {
+      return NextResponse.json({ error: 'No sectors found' }, { status: 404 });
+    }
 
     return NextResponse.json(sectors);
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Error fetching sectors:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch sectors' },
+      { status: 500 }
+    );
   }
 } 

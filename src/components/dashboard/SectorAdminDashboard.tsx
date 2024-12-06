@@ -12,16 +12,27 @@ export default function SectorAdminDashboard() {
   }, []);
 
   const fetchDashboardData = async () => {
-    const [reportsRes, summariesRes] = await Promise.all([
-      fetch('/api/reports/sector'),
-      fetch('/api/summaries/sector')
-    ]);
-    
-    const reportsData = await reportsRes.json();
-    const summariesData = await summariesRes.json();
-    
-    setReports(reportsData);
-    setSummaries(summariesData);
+    try {
+      const [reportsRes, summariesRes] = await Promise.all([
+        fetch('/api/reports/sector'),
+        fetch('/api/summaries/sector')
+      ]);
+      
+      if (!reportsRes.ok || !summariesRes.ok) {
+        console.error('Error fetching dashboard data');
+        return;
+      }
+
+      const reportsData = await reportsRes.json();
+      const summariesData = await summariesRes.json();
+      
+      setReports(Array.isArray(reportsData) ? reportsData : []);
+      setSummaries(Array.isArray(summariesData) ? summariesData : []);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      setReports([]);
+      setSummaries([]);
+    }
   };
 
   const handleStatusUpdate = async (reportId: number, status: string) => {
@@ -79,7 +90,7 @@ export default function SectorAdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {reports.map((report) => (
+              {Array.isArray(reports) && reports.map((report) => (
                 <tr key={report.id}>
                   <td className="px-6 py-4">{report.title}</td>
                   <td className="px-6 py-4">{report.description}</td>
