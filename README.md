@@ -58,14 +58,14 @@ Our platform provides:
 ## Technology Stack
 
 ### Frontend
-- Next.js 13 (App Router)
+- Next.js 13
 - TypeScript
 - Tailwind CSS
 - Framer Motion
 - NextAuth.js
 
 ### Backend
-- Node.js
+- Typescript
 - Prisma ORM
 - PostgreSQL
 - REST APIs
@@ -79,21 +79,26 @@ Our platform provides:
 ```
 nagorik-desk/
 ├── src/
-│   ├── app/                 # Next.js 13 app directory
+│   ├── app/                 # Next.js  app directory
 │   ├── components/          # React components
 │   ├── lib/                 # Utility functions
 │   └── types/              # TypeScript definitions
 ├── prisma/                  # Database schema
 ├── public/                  # Static assets
-└── tests/                  # Test files
 ```
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+
+- Node.js
 - PostgreSQL
-- npm or yarn
+- npm
+- Prisma (Database ORM)
+- NextAuth.js (Authentication)
+- Chart.js (Data visualization)
+- TailwindCSS (Styling)
+- TypeScript
+- Framer Motion (Animations)
 
 ### Installation
 
@@ -116,9 +121,8 @@ cp .env.example .env
 4. Configure your `.env` file:
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/nagorik-desk"
-NEXTAUTH_SECRET="your-secret-key"
 NEXTAUTH_URL="http://localhost:3000"
-APY_HUB_TOKEN="your-apy-hub-token"
+APY_HUB_TOKEN=APY0w5KBWDf3QtdFWdrkA8Y7sRmPrb9k6Iu2i8SlmSv0uK2GydSNpNVf7yKye5r8Jx5jxweHMAbPGd```
 ```
 
 5. Run database migrations:
@@ -175,6 +179,13 @@ GET /api/sectors/[sectorId]/subsectors
 
 ## Contributing
 
+We are grateful for the contributions and support of the following individuals:
+
+##Contributors
+1. Nishat Mahmud
+2. Shabikun Shahria
+
+Next you can contribute:
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
