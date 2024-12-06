@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Change this to your preferred database provider
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  role        Role
+  reports     Report[]  // Relation to reports submitted by the user
+  votes       Vote[]    // Relation to votes cast by the user
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  END_USER
+  SECTOR_ADMIN
+  GOVT_ADMIN
+}
+
+model Sector {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique
+  description         String?
+  problems            Report[]              // Relation to problems submitted under this sector
+  problemSummaries    ProblemSummary[]      // Added relation to ProblemSummary
+  resolutionPriorities ResolutionPriority[] // Added relation to ResolutionPriority
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+}
+
+model Report {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  sector      Sector    @relation(fields: [sectorId], references: [id])
+  sectorId    Int
+  status      Status    @default(PENDING)
+  resolution  String?
+  votes       Vote[]    // Relation to votes for this report
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Status {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+model Vote {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  report      Report    @relation(fields: [reportId], references: [id])
+  reportId    Int
+  isAccepted  Boolean   // Whether the user accepts the resolution or not
+  createdAt   DateTime  @default(now())
+}
+
+model ProblemSummary {
+  id          Int       @id @default(autoincrement())
+  sector      Sector    @relation(fields: [sectorId], references: [id])
+  sectorId    Int
+  summary     String
+  problems    Int       // Number of problems summarized
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ResolutionPriority {
+  id          Int       @id @default(autoincrement())
+  sector      Sector    @relation(fields: [sectorId], references: [id])
+  sectorId    Int
+  priority    Int       // Priority score calculated by ML
+  createdAt   DateTime  @default(now())
+}
