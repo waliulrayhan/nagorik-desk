@@ -1,80 +1,112 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { summarizeText } from '@/lib/summarize';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Parse FormData instead of JSON
+    const formData = await request.formData();
+    console.log('Received FormData:', Object.fromEntries(formData.entries()));
+
+    // Extract data from FormData
+    const sectorId = parseInt(formData.get('sectorId') as string);
+    const subsectorId = parseInt(formData.get('subsectorId') as string);
+    const description = formData.get('description') as string;
+    const images = formData.getAll('images') as File[];
+
+    // Validate required fields
+    if (!description || !sectorId || !subsectorId) {
+      return NextResponse.json({ 
+        error: 'Missing required fields', 
+        required: ['description', 'sectorId', 'subsectorId'],
+        received: { description, sectorId, subsectorId }
+      }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
+      select: { id: true }
     });
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const formData = await req.formData();
-    
-    // Extract and validate form data (remove title)
-    const sectorId = parseInt(formData.get('sectorId') as string);
-    const subsectorId = parseInt(formData.get('subsectorId') as string);
-    const description = formData.get('description') as string;
-    const imageFiles = formData.getAll('images') as File[];
-
-    // Validate required fields (remove title validation)
-    if (!sectorId || !subsectorId || !description) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-
-    // Handle image uploads
+    // Process images if any
     const imageUrls: string[] = [];
-    
-    for (const file of imageFiles) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const base64String = buffer.toString('base64');
-      const imageUrl = `data:${file.type};base64,${base64String}`;
-      imageUrls.push(imageUrl);
+    if (images.length > 0) {
+      // Here you would typically upload the images to your storage service
+      // For now, we'll just log them
+      console.log(`Processing ${images.length} images`);
+      // TODO: Add your image upload logic here
+      // imageUrls = await Promise.all(images.map(image => uploadImage(image)));
     }
-
-    // Create the report with null title
-    const report = await prisma.report.create({
-      data: {
-        title: null, // Set title to null
-        description,
-        sectorId,
-        subsectorId,
-        userId: user.id,
-        status: 'PENDING',
-        images: {
-          create: imageUrls.map(url => ({
-            url
-          }))
+    
+    const result = await prisma.$transaction(async (tx) => {
+      const report = await tx.report.create({
+        data: {
+          description: description.trim(),
+          userId: user.id,
+          sectorId: sectorId,
+          subsectorId: subsectorId,
+          images: {
+            create: imageUrls.map(url => ({
+              url: url
+            }))
+          }
         }
-      },
-      include: {
-        images: true
+      });
+
+      const sectorReports = await tx.report.findMany({
+        where: { sectorId },
+        select: { description: true }
+      });
+
+      const combinedText = sectorReports
+        .map(report => report.description)
+        .join('\n\n');
+
+      const summary = await summarizeText(combinedText);
+
+      const existingSummary = await tx.problemSummary.findFirst({
+        where: { sectorId }
+      });
+
+      if (existingSummary) {
+        await tx.problemSummary.update({
+          where: { id: existingSummary.id },
+          data: {
+            summary,
+            problems: sectorReports.length
+          }
+        });
+      } else {
+        await tx.problemSummary.create({
+          data: {
+            sectorId,
+            summary,
+            problems: sectorReports.length
+          }
+        });
       }
+
+      return report;
     });
 
+    return NextResponse.json({ success: true, data: result });
+  } catch (error: any) {
+    console.error('Error creating report:', error.message, error.stack);
     return NextResponse.json({ 
-      success: true,
-      report 
-    });
-
-  } catch (error) {
-    console.error('Error creating report:', error);
-    return NextResponse.json(
-      { error: 'Failed to create report' },
-      { status: 500 }
-    );
+      error: 'Internal Server Error', 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 });
   }
 } 
