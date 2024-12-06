@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     const sectorId = parseInt(formData.get('sectorId') as string);
     const subsectorId = parseInt(formData.get('subsectorId') as string);
     const description = formData.get('description') as string;
+    const imageFiles = formData.getAll('images') as File[];
 
     // Validate required fields
     if (!title || !sectorId || !subsectorId || !description) {
@@ -36,7 +37,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create the report
+    // Handle image uploads
+    const imageUrls: string[] = [];
+    
+    for (const file of imageFiles) {
+      // Convert file to Base64 string
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const base64String = buffer.toString('base64');
+      
+      // Create a data URL
+      const imageUrl = `data:${file.type};base64,${base64String}`;
+      imageUrls.push(imageUrl);
+    }
+
+    // Create the report with images
     const report = await prisma.report.create({
       data: {
         title,
@@ -44,7 +59,15 @@ export async function POST(req: Request) {
         sectorId,
         subsectorId,
         userId: user.id,
-        status: 'PENDING'
+        status: 'PENDING',
+        images: {
+          create: imageUrls.map(url => ({
+            url
+          }))
+        }
+      },
+      include: {
+        images: true
       }
     });
 

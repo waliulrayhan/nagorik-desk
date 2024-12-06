@@ -77,10 +77,23 @@ export default function NewReportForm() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
+    
+    // Validate file types and sizes
+    const validFiles = files.filter(file => {
+      const isValidType = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB max
+      return isValidType && isValidSize;
+    });
+
+    if (validFiles.length !== files.length) {
+      setError('Some files were rejected. Please only upload images under 5MB.');
+      return;
+    }
+
+    setFormData(prev => ({ ...prev, images: [...prev.images, ...validFiles] }));
 
     // Create preview URLs
-    const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+    const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
     setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
   };
 
@@ -109,6 +122,11 @@ export default function NewReportForm() {
       submitData.append('sectorId', formData.sectorId.toString());
       submitData.append('subsectorId', formData.subsectorId.toString());
       submitData.append('description', formData.description.trim());
+      
+      // Append each image to the FormData
+      formData.images.forEach((image, index) => {
+        submitData.append('images', image);
+      });
 
       const response = await fetch('/api/reports', {
         method: 'POST',
@@ -123,6 +141,9 @@ export default function NewReportForm() {
       const result = await response.json();
       
       if (result.success) {
+        // Clean up preview URLs
+        previewUrls.forEach(url => URL.revokeObjectURL(url));
+        
         router.push('/dashboard');
         router.refresh();
       } else {
@@ -137,6 +158,13 @@ export default function NewReportForm() {
       setIsLoading(false);
     }
   };
+
+  // Add cleanup for preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
 
   return (
     <div className="max-w-2xl mx-auto p-6">
